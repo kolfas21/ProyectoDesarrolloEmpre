@@ -1,13 +1,10 @@
 package com.diagnosticos.api.controllers;
 
-// Cambia la ruta del import según tu estructura real de paquetes
 import com.diagnosticos.aplication.services.UserService;
-
 import com.diagnosticos.domain.models.User;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import jakarta.validation.Valid;
 
 import java.util.List;
 import java.util.UUID;
@@ -44,12 +41,10 @@ public class UserController {
         }
     }
 
-    // Obtener un usuario por su ID
+    // Obtener usuario por ID (UUID)
     @GetMapping("/{id}")
-    public ResponseEntity<User> getById(@PathVariable UUID id) {
-        // Convierte UUID a Long (usa la parte más baja del UUID como ejemplo)
-        Long longId = id.getMostSignificantBits() & Long.MAX_VALUE;
-        return userService.findById(longId)
+    public ResponseEntity<?> getById(@PathVariable UUID id) {
+        return userService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -59,5 +54,24 @@ public class UserController {
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAll();
         return ResponseEntity.ok(users);
+    }
+
+    // Actualizar usuario por ID (UUID)
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable UUID id, @Valid @RequestBody User userDetails) {
+        return userService.updateUser(id, userDetails)
+                .map(updatedUser -> ResponseEntity.ok().body(updatedUser))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Eliminar usuario por ID (UUID)
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable UUID id) {
+        try {
+            userService.deleteUserById(id);
+            return ResponseEntity.ok("Usuario eliminado correctamente.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error al eliminar usuario: " + e.getMessage());
+        }
     }
 }
