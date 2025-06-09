@@ -18,9 +18,6 @@ public class Usuario {
     @Column(name = "correo")
     private String correo;
 
-    @Column(name = "password")
-    private String password;
-
     // Getters y Setters
     public Long getIdUser() {
         return idUser;
@@ -46,11 +43,5 @@ public class Usuario {
         this.correo = correo;
     }
 
-    public String getPassword() {
-        return password;
-    }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

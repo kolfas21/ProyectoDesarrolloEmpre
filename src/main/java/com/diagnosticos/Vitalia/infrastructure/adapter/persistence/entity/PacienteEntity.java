@@ -24,4 +24,6 @@ public class PacienteEntity {
     private String actividadFisica;
     private Double peso;
     private Double estatura;
+    private String alergias;
+    private String sintomas;
 }

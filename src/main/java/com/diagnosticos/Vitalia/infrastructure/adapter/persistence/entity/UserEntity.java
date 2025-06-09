@@ -3,18 +3,27 @@ package com.diagnosticos.Vitalia.infrastructure.adapter.persistence.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "usuarios")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
 public class UserEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_user") // <-- Especifica el nombre correcto de la columna
-    private Long idUser;
+    private Long id;
 
+    // Datos básicos (registro)
     private String nombre;
     private String cedula;
     private String correo;
     private String contrasena;
+    private LocalDate fechaNacimiento;
     private String rol;
+
+
+
+    // ... getters y setters
 }

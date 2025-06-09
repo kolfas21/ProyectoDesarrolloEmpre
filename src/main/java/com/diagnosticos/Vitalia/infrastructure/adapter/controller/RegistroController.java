@@ -10,6 +10,7 @@ import com.diagnosticos.Vitalia.domain.repository.PacienteRepository;
 import com.diagnosticos.Vitalia.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder; // Necesitarás agregar BCryptPasswordEncoder bean
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,20 +21,25 @@ public class RegistroController {
     private final UserRepository userRepo;
     private final PacienteRepository pacienteRepo;
     private final MedicoRepository medicoRepo;
+    private final PasswordEncoder passwordEncoder; 
 
-    /**
-     * Registra un nuevo paciente con los datos básicos y clínicos.
-     * @param dto datos del paciente recibidos desde el frontend.
-     * @return mensaje de confirmación.
-     */
     @PostMapping("/paciente")
     public ResponseEntity<String> registrarPaciente(@RequestBody PacienteDTO dto) {
-        UserEntity user = new UserEntity(null,
-                dto.getNombre(),
-                dto.getCedula(),
-                dto.getCorreo(),
-                dto.getContrasena(),
-                "PACIENTE");
+        if (userRepo.existsByCorreo(dto.getCorreo())) {
+            return ResponseEntity.badRequest().body("❌ Correo ya registrado");
+        }
+        if (userRepo.existsByCedula(dto.getCedula())) {
+            return ResponseEntity.badRequest().body("❌ Cédula ya registrada");
+        }
+
+        UserEntity user = new UserEntity();
+        user.setNombre(dto.getNombre());
+        user.setCedula(dto.getCedula());
+        user.setCorreo(dto.getCorreo());
+        user.setContrasena(passwordEncoder.encode(dto.getContrasena()));
+        user.setFechaNacimiento(java.time.LocalDate.parse(dto.getFechaNacimiento()));
+        // Si tienes campo de tipo/rol
+        // user.setTipo("PACIENTE"); 
 
         user = userRepo.save(user);
 
@@ -52,30 +58,31 @@ public class RegistroController {
         return ResponseEntity.ok("✅ Paciente registrado correctamente");
     }
 
-    /**
-     * Registra un nuevo médico con sus datos personales y profesionales.
-     * @param dto datos del médico recibidos desde el frontend.
-     * @return mensaje de confirmación.
-     */
     @PostMapping("/medico")
+    // @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> registrarMedico(@RequestBody MedicoDTO dto) {
-        UserEntity user = new UserEntity(null,
-                dto.getNombre(),
-                dto.getCedula(),
-                dto.getCorreo(),
-                dto.getContrasena(),
-                "MEDICO");
+        if (userRepo.existsByCorreo(dto.getCorreo())) {
+            return ResponseEntity.badRequest().body("❌ Correo ya registrado");
+        }
+        if (userRepo.existsByCedula(dto.getCedula())) {
+            return ResponseEntity.badRequest().body("❌ Cédula ya registrada");
+        }
 
+        UserEntity user = new UserEntity();
+        user.setNombre(dto.getNombre());
+        user.setCedula(dto.getCedula());
+        user.setCorreo(dto.getCorreo());
+        user.setContrasena(passwordEncoder.encode(dto.getContrasena()));
+        // user.setTipo("MEDICO"); 
         user = userRepo.save(user);
 
-        MedicoEntity medico = new MedicoEntity(null,
-                dto.getEspecialidad(),
-                dto.getRegistroProfesional(),
-                user);
+        MedicoEntity medico = new MedicoEntity();
+        medico.setEspecialidad(dto.getEspecialidad());
+        medico.setRegistroProfesional(dto.getRegistroProfesional());
+        medico.setUser(user);
 
         medicoRepo.save(medico);
 
         return ResponseEntity.ok("✅ Médico registrado correctamente");
     }
 }
-
