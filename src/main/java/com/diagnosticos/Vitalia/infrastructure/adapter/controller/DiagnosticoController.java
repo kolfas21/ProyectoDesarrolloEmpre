@@ -1,10 +1,21 @@
 package com.diagnosticos.Vitalia.infrastructure.adapter.controller;
 
+import com.diagnosticos.Vitalia.application.service.GenerarDiagnosticoService;
 import com.diagnosticos.Vitalia.domain.model.Usuario;
+import com.diagnosticos.Vitalia.infrastructure.adapter.controller.dto.DiagnosticoRespuestaDTO;
+import com.diagnosticos.Vitalia.infrastructure.adapter.controller.dto.DiagnosticoSolicitudDTO;
 import com.diagnosticos.Vitalia.infrastructure.strategy.DiagnosticoContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+
+/**
+ * Controller responsable de manejar la petición HTTP del diagnóstico.
+ * Está en la capa de infraestructura (entrada/salida del sistema).
+ * Patrón "Controller" y "DTO mapping".
+ */
+
 
 import java.util.*;
 
@@ -31,4 +42,12 @@ public class DiagnosticoController {
         List<Usuario> usuarios = new ArrayList<>(usuarioDB.values());
         return ResponseEntity.ok(usuarios);
     }
+
+    private final GenerarDiagnosticoService service;
+
+    @PostMapping("/generar")
+    public DiagnosticoRespuestaDTO generarDiagnostico(@RequestBody DiagnosticoSolicitudDTO dto) {
+        return service.generarDiagnostico(dto);
+    }
+
 }
