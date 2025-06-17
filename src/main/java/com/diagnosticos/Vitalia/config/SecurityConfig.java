@@ -11,6 +11,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @RequiredArgsConstructor
@@ -21,31 +26,43 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/registro/paciente").permitAll()
-                .requestMatchers("/api/registro/medico").hasRole("ADMIN")
-                .anyRequest().authenticated()
-            )
-            .httpBasic(httpBasic -> {}) // Solo HTTP Basic, recomendado para API
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        
-        // Aquí puedes agregar la línea para el userDetailsService, si es necesario (Spring Boot lo detecta automáticamente)
-        // http.userDetailsService(userDetailsService);
+                .cors(cors -> {}) // Habilita el bean de CORS
+                .csrf(csrf -> csrf.disable()) // Desactiva CSRF porque es una API
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/usuarios/registrar").permitAll() // Permite acceso público
+                        .requestMatchers("/api/registro/paciente").permitAll()
+                        .requestMatchers("/api/registro/medico").hasRole("ADMIN")
+                        .anyRequest().authenticated()
+                )
+                .httpBasic(httpBasic -> {}) // Usa autenticación básica para otras rutas protegidas
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }
 
+    // Configuración global de CORS
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200")); // Cambia si despliegas
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true); // Permite enviar cookies o encabezados personalizados
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
+    // AuthenticationManager necesario para login
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
 
-    // Elimina el bean de usuario en memoria, NO lo necesitas ahora.
-    // Asegúrate de mantener SÓLO el bean passwordEncoder, preferentemente en un archivo PasswordConfig,
-    // o aquí si no lo tienes en otra parte.
-@Bean
-public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-}
+    // Encriptador de contraseñas (BCrypt)
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

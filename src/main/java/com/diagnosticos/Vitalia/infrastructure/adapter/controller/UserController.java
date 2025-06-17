@@ -9,6 +9,7 @@ import com.diagnosticos.Vitalia.infrastructure.adapter.persistence.entity.UserEn
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -17,10 +18,10 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/registro")
-    public ResponseEntity<String> registrarPaciente(@RequestBody RegistroPacienteDTO dto) {
+    @PostMapping("/registrar")
+    public ResponseEntity<Map<String, String>> registrarPaciente(@RequestBody RegistroPacienteDTO dto) {
         userService.registrarPaciente(dto);
-        return ResponseEntity.ok("Paciente registrado correctamente");
+        return ResponseEntity.ok(Map.of("mensaje", "Paciente registrado correctamente"));
     }
 
     @PutMapping("/{id}/info-medica")
