@@ -1,7 +1,6 @@
 package com.diagnosticos.Vitalia.infrastructure.strategy;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

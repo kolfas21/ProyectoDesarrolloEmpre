@@ -46,4 +46,11 @@ public class UserController {
         List<UserEntity> usuarios = userService.obtenerTodosLosUsuarios();
         return ResponseEntity.ok(usuarios);
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<UserEntity> obtenerUsuarioPorId(@PathVariable Long id) {
+        return userService.obtenerUsuarioPorId(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
 }

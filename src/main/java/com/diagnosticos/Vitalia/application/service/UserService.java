@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 import java.util.List;
 
+
 @Service
 public class UserService {
 
@@ -27,7 +28,6 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     public UserEntity registrarPaciente(@NotNull RegistroPacienteDTO dto) {
-        // Validaciones de unicidad
         if (userRepository.existsByCorreo(dto.getCorreo())) {
             throw new IllegalArgumentException("❌ Correo ya registrado");
         }
@@ -40,11 +40,7 @@ public class UserService {
         usuario.setCedula(dto.getCedula());
         usuario.setCorreo(dto.getCorreo());
         usuario.setContrasena(passwordEncoder.encode(dto.getContrasena()));
-
-        if (dto.getFechaNacimiento() != null) {
-            usuario.setFechaNacimiento(dto.getFechaNacimiento());
-        }
-
+        usuario.setFechaNacimiento(dto.getFechaNacimiento());
         usuario.setRol("PACIENTE");
 
         return userRepository.save(usuario);
@@ -52,20 +48,47 @@ public class UserService {
 
     @Transactional
     public void actualizarInfoMedica(Long id, ActualizarInfoMedicaDTO dto) {
-        Optional<PacienteEntity> optionalPaciente = pacienteRepository.findById(id);
-        if (optionalPaciente.isPresent()) {
-            PacienteEntity paciente = optionalPaciente.get();
-            paciente.setPeso(dto.getPeso());
-            paciente.setEstatura(dto.getEstatura());
-            paciente.setActividadFisica(dto.getActividadFisica());
-            paciente.setAlergias(dto.getAlergias());
-            paciente.setSintomas(dto.getSintomas());
-            pacienteRepository.save(paciente); // Guardar la información actualizada
-        } else {
-            throw new RuntimeException("Paciente no encontrado con id: " + id);
-        }
+        PacienteEntity paciente = pacienteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Paciente no encontrado con id: " + id));
+
+        paciente.setPeso(dto.getPeso());
+        paciente.setEstatura(dto.getEstatura());
+        paciente.setActividadFisica(dto.getActividadFisica());
+        paciente.setAlergias(dto.getAlergias());
+        paciente.setSintomas(dto.getSintomas());
+
+        pacienteRepository.save(paciente);
     }
+
     public List<UserEntity> obtenerTodosLosUsuarios() {
         return userRepository.findAll();
+    }
+
+    public Optional<UserEntity> obtenerUsuarioPorId(Long id) {
+        return userRepository.findById(id);
+    }
+
+    public void actualizarUsuario(Long id, UserEntity datosActualizados) {
+        UserEntity usuario = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con id: " + id));
+
+        usuario.setNombre(datosActualizados.getNombre());
+        usuario.setCedula(datosActualizados.getCedula());
+        usuario.setCorreo(datosActualizados.getCorreo());
+        usuario.setFechaNacimiento(datosActualizados.getFechaNacimiento());
+        usuario.setRol(datosActualizados.getRol());
+
+        if (datosActualizados.getContrasena() != null && !datosActualizados.getContrasena().isBlank()) {
+            usuario.setContrasena(passwordEncoder.encode(datosActualizados.getContrasena()));
+        }
+
+        userRepository.save(usuario);
+    }
+
+    public void eliminarUsuario(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new IllegalArgumentException("Usuario no encontrado con id: " + id);
+        }
+        userRepository.deleteById(id);
     }
 }
