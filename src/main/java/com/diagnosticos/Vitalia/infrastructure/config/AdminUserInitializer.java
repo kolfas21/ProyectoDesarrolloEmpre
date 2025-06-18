@@ -14,6 +14,8 @@ public class AdminUserInitializer {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
+
+
     @PostConstruct
     public void createDefaultAdmin() {
         String adminEmail = "admin@demo.com";

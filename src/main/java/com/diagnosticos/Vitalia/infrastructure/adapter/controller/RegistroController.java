@@ -73,7 +73,7 @@ public class RegistroController {
         user.setCedula(dto.getCedula());
         user.setCorreo(dto.getCorreo());
         user.setContrasena(passwordEncoder.encode(dto.getContrasena()));
-        // user.setTipo("MEDICO"); 
+        user.setRol("MEDICO"); // ✅ Aquí se corrige
         user = userRepo.save(user);
 
         MedicoEntity medico = new MedicoEntity();
@@ -85,4 +85,5 @@ public class RegistroController {
 
         return ResponseEntity.ok("✅ Médico registrado correctamente");
     }
+
 }

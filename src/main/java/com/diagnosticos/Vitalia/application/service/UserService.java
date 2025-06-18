@@ -27,17 +27,26 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     public UserEntity registrarPaciente(@NotNull RegistroPacienteDTO dto) {
+        // Validaciones de unicidad
+        if (userRepository.existsByCorreo(dto.getCorreo())) {
+            throw new IllegalArgumentException("❌ Correo ya registrado");
+        }
+        if (userRepository.existsByCedula(dto.getCedula())) {
+            throw new IllegalArgumentException("❌ Cédula ya registrada");
+        }
+
         UserEntity usuario = new UserEntity();
         usuario.setNombre(dto.getNombre());
         usuario.setCedula(dto.getCedula());
         usuario.setCorreo(dto.getCorreo());
-        // Encriptar la contraseña antes de guardar
         usuario.setContrasena(passwordEncoder.encode(dto.getContrasena()));
+
         if (dto.getFechaNacimiento() != null) {
             usuario.setFechaNacimiento(dto.getFechaNacimiento());
         }
-        // Asignar el rol automáticamente
+
         usuario.setRol("PACIENTE");
+
         return userRepository.save(usuario);
     }
 

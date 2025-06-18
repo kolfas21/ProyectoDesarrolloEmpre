@@ -30,6 +30,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Desactiva CSRF porque es una API
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/usuarios/registrar").permitAll() // Permite acceso público
+                        .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/registro/paciente").permitAll()
                         .requestMatchers("/api/registro/medico").hasRole("ADMIN")
                         .anyRequest().authenticated()
