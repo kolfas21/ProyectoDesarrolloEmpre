@@ -38,8 +38,9 @@ public class RegistroController {
         user.setCedula(dto.getCedula());
         user.setCorreo(dto.getCorreo());
         user.setContrasena(passwordEncoder.encode(dto.getContrasena()));
-        // Corregido: si ya es LocalDate, no parsear
+// Corregido: si ya es LocalDate, no parsear
         user.setFechaNacimiento(dto.getFechaNacimiento());
+        user.setRol("PACIENTE");
         user = userRepo.save(user);
         PacienteEntity paciente = new PacienteEntity();
         paciente.setUser(user);
