@@ -4,7 +4,6 @@ import com.diagnosticos.Vitalia.infrastructure.adapter.controller.dto.PacienteDT
 import com.diagnosticos.Vitalia.infrastructure.adapter.controller.dto.MedicoDTO;
 import com.diagnosticos.Vitalia.infrastructure.adapter.persistence.entity.PacienteEntity;
 import com.diagnosticos.Vitalia.infrastructure.adapter.persistence.entity.UserEntity;
-import com.diagnosticos.Vitalia.infrastructure.adapter.persistence.entity.MedicoEntity;
 import com.diagnosticos.Vitalia.domain.repository.PacienteRepository;
 import com.diagnosticos.Vitalia.domain.repository.UserRepository;
 import com.diagnosticos.Vitalia.application.service.MedicoService;
@@ -66,7 +65,5 @@ public class RegistroController {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
-
-    // Eliminado el endpoint de búsqueda de médico por cédula, ahora está en MedicoController
 
 }
