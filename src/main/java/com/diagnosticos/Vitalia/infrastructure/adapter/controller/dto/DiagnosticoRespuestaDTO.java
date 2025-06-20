@@ -8,7 +8,7 @@ import java.util.Map;
  * Forma parte de la infraestructura.
  */
 @Data
-public class DiagnosticoRespuestaDTO {
+public class    DiagnosticoRespuestaDTO {
     private Map<String, Object> data; // O ajusta el modelo según la estructura generada por la IA
     private String rawJson;           // El JSON como string (opcional)
 }

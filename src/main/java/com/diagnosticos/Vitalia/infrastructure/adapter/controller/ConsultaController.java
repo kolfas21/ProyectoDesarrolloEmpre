@@ -1,5 +1,6 @@
 package com.diagnosticos.Vitalia.infrastructure.adapter.controller;
 
+import com.diagnosticos.Vitalia.application.service.ConsultaMedicaService;
 import com.diagnosticos.Vitalia.infrastructure.adapter.controller.dto.ConsultaRequestDTO;
 import com.diagnosticos.Vitalia.infrastructure.adapter.persistence.entity.ConsultaMedicaEntity;
 import com.diagnosticos.Vitalia.infrastructure.adapter.persistence.entity.MedicoEntity;
@@ -18,27 +19,15 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class ConsultaController {
 
-    private final PacienteRepository pacienteRepo;
-    private final MedicoRepository medicoRepo;
-    private final ConsultaMedicaRepository consultaRepo;
+    private final ConsultaMedicaService consultaService;
 
     @PostMapping
     public ResponseEntity<?> crearConsulta(@RequestBody ConsultaRequestDTO dto) {
-        PacienteEntity paciente = pacienteRepo.findById(dto.getIdPaciente())
-                .orElse(null);
-        if (paciente == null) {
-            return ResponseEntity.badRequest().body("Paciente no encontrado");
+        try {
+            ConsultaMedicaEntity consulta = consultaService.crearConsulta(dto);
+            return ResponseEntity.ok("Consulta creada correctamente con ID: " + consulta.getIdConsulta());
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-
-        MedicoEntity medico = medicoRepo.findById(dto.getIdMedico())
-                .orElse(null);
-        if (medico == null) {
-            return ResponseEntity.badRequest().body("Médico no encontrado");
-        }
-
-        ConsultaMedicaEntity consulta = new ConsultaMedicaEntity(null, LocalDate.now(), paciente, medico);
-        consultaRepo.save(consulta);
-
-        return ResponseEntity.ok("Consulta creada correctamente con ID: " + consulta.getIdConsulta());
     }
 }

@@ -1,7 +1,11 @@
 package com.diagnosticos.Vitalia.application.service;
 
+import com.diagnosticos.Vitalia.domain.repository.ConsultaMedicaRepository;
+import com.diagnosticos.Vitalia.domain.repository.DiagnosticoRepository;
 import com.diagnosticos.Vitalia.infrastructure.adapter.controller.dto.DiagnosticoSolicitudDTO;
 import com.diagnosticos.Vitalia.infrastructure.adapter.controller.dto.DiagnosticoRespuestaDTO;
+import com.diagnosticos.Vitalia.infrastructure.adapter.persistence.entity.ConsultaMedicaEntity;
+import com.diagnosticos.Vitalia.infrastructure.adapter.persistence.entity.DiagnosticoEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -9,14 +13,18 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Service
 @RequiredArgsConstructor
+@Service
 public class GenerarDiagnosticoService {
+
+    private final ConsultaMedicaRepository consultaRepo;
+    private final DiagnosticoRepository diagnosticoRepo;
 
     public DiagnosticoRespuestaDTO generarDiagnostico(DiagnosticoSolicitudDTO dto) {
         DiagnosticoRespuestaDTO respuesta = new DiagnosticoRespuestaDTO();
@@ -32,6 +40,25 @@ public class GenerarDiagnosticoService {
 
             if (!jsonExtraido.isEmpty()) {
                 resultado = new ObjectMapper().readValue(jsonExtraido, Map.class);
+
+                // ✅ Extraer la condición
+                Map<String, Object> diagnosticosMap = (Map<String, Object>) resultado.get("diagnosticos");
+                String condicion = (String) diagnosticosMap.get("condicion");
+
+                // 🔍 Buscar la consulta médica asociada
+                ConsultaMedicaEntity consulta = consultaRepo.findById(dto.getIdConsulta()).orElse(null);
+                if (consulta == null) {
+                    resultado.put("error", "Consulta médica no encontrada con ID: " + dto.getIdConsulta());
+                } else {
+                    // 💾 Guardar diagnóstico
+                    DiagnosticoEntity diagnostico = new DiagnosticoEntity();
+                    diagnostico.setConsulta(consulta);
+                    diagnostico.setResultado(condicion);
+                    diagnostico.setProbabilidad(1.0f); // o alguna lógica para determinar esto
+
+                    diagnosticoRepo.save(diagnostico);
+                }
+
             } else {
                 resultado.put("error", "La IA no devolvió JSON válido.");
                 resultado.put("texto", rawText);
@@ -47,7 +74,6 @@ public class GenerarDiagnosticoService {
         respuesta.setRawJson(jsonExtraido);
         return respuesta;
     }
-
     private String construirPrompt(DiagnosticoSolicitudDTO dto) {
         String fecha = LocalDate.now().toString();
 
