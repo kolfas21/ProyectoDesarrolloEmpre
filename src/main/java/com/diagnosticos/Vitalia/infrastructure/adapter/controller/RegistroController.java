@@ -67,14 +67,6 @@ public class RegistroController {
         }
     }
 
-    @GetMapping("/medico/cedula/{cedula}")
-    public ResponseEntity<?> buscarMedicoPorCedula(@PathVariable String cedula) {
-        try {
-            MedicoEntity medico = medicoService.obtenerPorCedula(cedula);
-            return ResponseEntity.ok(medico);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
-    }
+    // Eliminado el endpoint de búsqueda de médico por cédula, ahora está en MedicoController
 
 }
