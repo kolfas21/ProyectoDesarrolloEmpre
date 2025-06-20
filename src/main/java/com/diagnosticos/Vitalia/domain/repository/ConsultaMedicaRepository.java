@@ -1,24 +1,27 @@
-<<<<<<< HEAD
 package com.diagnosticos.Vitalia.domain.repository;
 
 import com.diagnosticos.Vitalia.infrastructure.adapter.persistence.entity.ConsultaMedicaEntity;
-import com.diagnosticos.Vitalia.infrastructure.adapter.persistence.entity.MedicoEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
 public interface ConsultaMedicaRepository extends JpaRepository<ConsultaMedicaEntity, Long> {
-    boolean existsByMedicoAndFechaHoraConsultaBetween(MedicoEntity medico, LocalDateTime inicio, LocalDateTime fin);
 
-
+    @Query(
+    value = """
+        SELECT COUNT(*) > 0
+        FROM consulta_medica c
+        WHERE c.id_medico = :medicoId
+          AND c.fecha_hora_consulta < :fin
+          AND (c.fecha_hora_consulta + (c.duracion_minutos || ' minutes')::interval) > :inicio
+        """,
+        nativeQuery = true
+    )
+    boolean existeTraslape(
+        @Param("medicoId") Long medicoId,
+        @Param("inicio") LocalDateTime inicio,
+        @Param("fin") LocalDateTime fin
+    );
 }
-=======
-package com.diagnosticos.Vitalia.domain.repository;
-
-import com.diagnosticos.Vitalia.infrastructure.adapter.persistence.entity.ConsultaMedicaEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-public interface ConsultaMedicaRepository extends JpaRepository<ConsultaMedicaEntity, Long> {
-}
->>>>>>> 39cab2f1dfea6e39219611a2c640b3b247bcb829
