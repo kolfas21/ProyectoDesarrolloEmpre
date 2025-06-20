@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/medicos")
@@ -44,15 +43,5 @@ public class MedicoController {
     public ResponseEntity<String> eliminar(@PathVariable Long id) {
         medicoService.eliminarMedico(id);
         return ResponseEntity.ok("✅ Médico eliminado correctamente");
-    }
-
-    @GetMapping("/cedula/{cedula}")
-    public ResponseEntity<?> buscarMedicoPorCedula(@PathVariable String cedula) {
-        try {
-            MedicoEntity medico = medicoService.obtenerPorCedula(cedula);
-            return ResponseEntity.ok(medico);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
     }
 }
