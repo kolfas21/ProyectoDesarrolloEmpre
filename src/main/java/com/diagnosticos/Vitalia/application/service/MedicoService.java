@@ -48,10 +48,15 @@ public class MedicoService {
         return medicoRepo.findAll();
     }
 
+    public MedicoEntity obtenerPorCedula(String cedula) {
+    return medicoRepo.findByUserCedula(cedula)
+        .orElseThrow(() -> new IllegalArgumentException("Médico no encontrado con cédula: " + cedula));
+    }
     public MedicoEntity obtenerPorId(Long id) {
         return medicoRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Médico no encontrado con id: " + id));
     }
+    
 
     public void actualizarMedico(Long id, ActualizarMedicoDTO dto) {
         MedicoEntity medico = medicoRepo.findById(id)

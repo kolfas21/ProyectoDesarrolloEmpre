@@ -44,4 +44,9 @@ public class MedicoController {
         medicoService.eliminarMedico(id);
         return ResponseEntity.ok("✅ Médico eliminado correctamente");
     }
+
+    @GetMapping("/cedula/{cedula}")
+    public ResponseEntity<MedicoEntity> obtenerPorCedula(@PathVariable String cedula) {
+        return ResponseEntity.ok(medicoService.obtenerPorCedula(cedula));
+    }
 }
