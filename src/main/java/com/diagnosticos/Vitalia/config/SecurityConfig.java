@@ -1,5 +1,6 @@
 package com.diagnosticos.Vitalia.config;
 
+import com.diagnosticos.Vitalia.application.service.CustomOAuth2UserService;
 import com.diagnosticos.Vitalia.security.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +25,7 @@ public class SecurityConfig {
     private final CustomUserDetailsService userDetailsService;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, CustomOAuth2UserService customOAuth2UserService) throws Exception {
         http
                 .cors(cors -> {}) // Habilita el bean de CORS
                 .csrf(csrf -> csrf.disable()) // Desactiva CSRF porque es una API
@@ -34,6 +35,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/registro/paciente").permitAll()
                         .requestMatchers("/api/registro/medico").hasRole("ADMIN")
                         .anyRequest().authenticated()
+                )//Inicio de sesion con google
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService)
+                        )
                 )
                 .httpBasic(httpBasic -> {}) // Usa autenticación básica para otras rutas protegidas
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
