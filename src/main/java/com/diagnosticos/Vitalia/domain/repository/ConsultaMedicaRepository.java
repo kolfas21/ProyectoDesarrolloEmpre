@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 package com.diagnosticos.Vitalia.domain.repository;
 
 import com.diagnosticos.Vitalia.infrastructure.adapter.persistence.entity.ConsultaMedicaEntity;
@@ -12,3 +13,12 @@ public interface ConsultaMedicaRepository extends JpaRepository<ConsultaMedicaEn
 
 
 }
+=======
+package com.diagnosticos.Vitalia.domain.repository;
+
+import com.diagnosticos.Vitalia.infrastructure.adapter.persistence.entity.ConsultaMedicaEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ConsultaMedicaRepository extends JpaRepository<ConsultaMedicaEntity, Long> {
+}
+>>>>>>> 39cab2f1dfea6e39219611a2c640b3b247bcb829
