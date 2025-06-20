@@ -4,6 +4,7 @@ import com.diagnosticos.Vitalia.infrastructure.adapter.controller.dto.PacienteDT
 import com.diagnosticos.Vitalia.infrastructure.adapter.controller.dto.MedicoDTO;
 import com.diagnosticos.Vitalia.infrastructure.adapter.persistence.entity.PacienteEntity;
 import com.diagnosticos.Vitalia.infrastructure.adapter.persistence.entity.UserEntity;
+import com.diagnosticos.Vitalia.infrastructure.adapter.persistence.entity.MedicoEntity;
 import com.diagnosticos.Vitalia.domain.repository.PacienteRepository;
 import com.diagnosticos.Vitalia.domain.repository.UserRepository;
 import com.diagnosticos.Vitalia.application.service.MedicoService;
@@ -61,6 +62,16 @@ public class RegistroController {
         try {
             medicoService.registrarMedico(dto);
             return ResponseEntity.ok(Map.of("mensaje", "Médico registrado correctamente"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/medico/cedula/{cedula}")
+    public ResponseEntity<?> buscarMedicoPorCedula(@PathVariable String cedula) {
+        try {
+            MedicoEntity medico = medicoService.obtenerPorCedula(cedula);
+            return ResponseEntity.ok(medico);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
