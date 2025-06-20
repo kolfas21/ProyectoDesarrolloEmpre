@@ -91,4 +91,15 @@ public class UserService {
         }
         userRepository.deleteById(id);
     }
+    public UserEntity obtenerMedicoPorCedula(String cedula) {
+        return userRepository.findByCedulaAndRol(cedula, "MEDICO")
+                .orElseThrow(() -> new IllegalArgumentException("No se encontró un médico con la cédula: " + cedula));
+    }
+    public UserEntity obtenerPacientePorCedula(String cedula) {
+    return userRepository.findByCedulaAndRol(cedula, "PACIENTE")
+            .orElseThrow(() -> new IllegalArgumentException("No se encontró un paciente con la cédula: " + cedula));
+}
+
+    
+    
 }

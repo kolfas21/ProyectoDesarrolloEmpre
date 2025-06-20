@@ -50,9 +50,11 @@ public class DiagnosticoController {
     private final GenerarDiagnosticoService service;
 
     @PostMapping("/generar")
-    public DiagnosticoRespuestaDTO generarDiagnostico(@RequestBody DiagnosticoSolicitudDTO dto) {
-        return service.generarDiagnostico(dto);
-    }
+public ResponseEntity<DiagnosticoRespuestaDTO> generarDiagnostico(@RequestBody DiagnosticoSolicitudDTO dto) {
+    DiagnosticoRespuestaDTO respuesta = service.generarDiagnostico(dto);
+    return ResponseEntity.ok(respuesta);
+}
+
 
     @RestController
     @RequestMapping("/api")

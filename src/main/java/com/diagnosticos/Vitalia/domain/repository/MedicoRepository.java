@@ -10,6 +10,4 @@ public interface MedicoRepository extends JpaRepository<MedicoEntity, Long> {
     Optional<MedicoEntity> findById(Long id);
     void deleteById(Long id);
     List<MedicoEntity> findAll();
-    Optional<MedicoEntity> findByUserCedula(String cedula);
-
 }

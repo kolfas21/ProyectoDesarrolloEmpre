@@ -22,8 +22,8 @@ public class UserEntity {
     private String contrasena;
     private LocalDate fechaNacimiento;
     private String rol;
-
+   
 
 
     // ... getters y setters
-}
+}   

@@ -81,4 +81,62 @@ public class PacienteService {
         }
         pacienteRepo.deleteById(id);
     }
+
+    /**
+     * Llenado inicial de datos clínicos si el paciente aún no está registrado (desde la cita).
+     */
+    public void completarDatosMedicos(PacienteDTO dto) {
+        UserEntity user = userRepo.findById(dto.getIdUsuario())
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + dto.getIdUsuario()));
+
+        if (!"PACIENTE".equalsIgnoreCase(user.getRol())) {
+            throw new IllegalArgumentException("El usuario no tiene el rol PACIENTE");
+        }
+
+        // Verifica si ya tiene entrada en la tabla pacientes
+        if (pacienteRepo.existsById(user.getId())) {
+            throw new IllegalArgumentException("El paciente ya tiene información médica registrada");
+        }
+
+        PacienteEntity paciente = new PacienteEntity();
+        paciente.setUser(user);
+        paciente.setFechaNacimiento(dto.getFechaNacimiento());
+        paciente.setSexo(dto.getSexo());
+        paciente.setEstadoCivil(dto.getEstadoCivil());
+        paciente.setOcupacion(dto.getOcupacion());
+        paciente.setActividadFisica(dto.getActividadFisica());
+        paciente.setPeso(dto.getPeso());
+        paciente.setEstatura(dto.getEstatura());
+
+        pacienteRepo.save(paciente);
+    }
+
+    public void completarDatosPaciente(PacienteDTO dto) {
+    UserEntity user = userRepo.findById(dto.getIdUsuario())
+            .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + dto.getIdUsuario()));
+
+    if (!"PACIENTE".equalsIgnoreCase(user.getRol())) {
+        throw new IllegalArgumentException("El usuario no tiene el rol PACIENTE");
+    }
+
+    PacienteEntity paciente = pacienteRepo.findByUser(user).orElseGet(() -> {
+        PacienteEntity nuevo = new PacienteEntity();
+        nuevo.setUser(user);
+        return nuevo;
+    });
+
+    paciente.setFechaNacimiento(dto.getFechaNacimiento());
+    paciente.setSexo(dto.getSexo());
+    paciente.setEstadoCivil(dto.getEstadoCivil());
+    paciente.setOcupacion(dto.getOcupacion());
+    paciente.setActividadFisica(dto.getActividadFisica());
+    paciente.setPeso(dto.getPeso());
+    paciente.setEstatura(dto.getEstatura());
+    paciente.setAlergias(dto.getAlergias());
+    paciente.setSintomas(dto.getSintomas());
+
+    pacienteRepo.save(paciente);
+    }
+
+
 }

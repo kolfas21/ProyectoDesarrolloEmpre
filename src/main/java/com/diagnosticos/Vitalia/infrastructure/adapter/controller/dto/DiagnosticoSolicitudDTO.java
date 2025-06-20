@@ -6,9 +6,9 @@ import java.util.List;
 @Data
 public class DiagnosticoSolicitudDTO {
     private Long idConsulta;
-    private String id;
-    private String nombre;
-    private int edad;
-    private String genero;
     private List<String> sintomas;
+    private Long id;
+    private String nombre;
+    private Integer edad;
+    private String genero;
 }

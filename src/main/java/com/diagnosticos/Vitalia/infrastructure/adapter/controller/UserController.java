@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.diagnosticos.Vitalia.infrastructure.adapter.controller.dto.RegistroPacienteDTO;
 import com.diagnosticos.Vitalia.infrastructure.adapter.controller.dto.ActualizarInfoMedicaDTO;
+//import com.diagnosticos.Vitalia.infrastructure.adapter.persistence.entity.MedicoEntity;
 import com.diagnosticos.Vitalia.infrastructure.adapter.persistence.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 
@@ -51,6 +52,16 @@ public class UserController {
         return userService.obtenerUsuarioPorId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/obtenerMedicoPorCedula/{cedula}")
+    public ResponseEntity<UserEntity> obtenerMedicoPorCedula(@PathVariable String cedula) {
+    return ResponseEntity.ok(userService.obtenerMedicoPorCedula(cedula));
+    }
+
+    @GetMapping("/obtenerPacientePorCedula/{cedula}")
+    public ResponseEntity<UserEntity> obtenerPacientePorCedula(@PathVariable String cedula) {
+    return ResponseEntity.ok(userService.obtenerPacientePorCedula(cedula));
     }
 
 }

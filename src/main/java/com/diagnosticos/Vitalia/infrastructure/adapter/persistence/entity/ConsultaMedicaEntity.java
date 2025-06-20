@@ -3,7 +3,7 @@ package com.diagnosticos.Vitalia.infrastructure.adapter.persistence.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "consulta_medica")
@@ -18,9 +18,13 @@ public class ConsultaMedicaEntity {
     @Column(name = "id_consulta")
     private Long idConsulta;
 
-    @Column(name = "fecha_consulta", nullable = false)
-    private LocalDate fechaConsulta;
+    @Column(name = "fecha_hora_consulta", nullable = false)
+    private LocalDateTime fechaHoraConsulta;
 
+    @Column(name = "duracion_minutos", nullable = false)
+    private Integer duracionMinutos = 15;
+
+    // ✅ ÚNICA relación válida para el paciente (ya no necesitas UserEntity aquí)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_paciente", nullable = false)
     private PacienteEntity paciente;
@@ -28,6 +32,7 @@ public class ConsultaMedicaEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_medico", nullable = false)
     private MedicoEntity medico;
+
+    @Column(name = "estado", nullable = false)
+    private String estado = "PENDIENTE";
 }
-
-
